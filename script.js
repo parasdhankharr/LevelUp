@@ -16,7 +16,7 @@ function showNews(articles) {
 
     div.innerHTML = `
       <img 
-        src="${article.image || 'https://picsum.photos/800/400'}"
+        src="${article.image }"
         style="width:100%; height:80%; object-fit:cover; border-radius:25px;"
       >
       <h3 style="padding:10px;">${article.title}</h3>
@@ -33,7 +33,7 @@ function showNews(articles) {
     // grid 3 ka kaam 
     let cardGrid3 = document.getElementById("card-grid-3");
 
-    for(let i =2; i <= articles.length ; i+=1){
+    for(let i =2; i <articles.length ; i+=1){
         let article = articles[i]
     
     let div = document.createElement("div");    //.   crads bna rhe hai small ones sara data fetch krna ke liye
@@ -41,14 +41,14 @@ function showNews(articles) {
 
     div.innerHTML = `
     <img 
-      src="${article.image || 'https://picsum.photos/300/200'}"
+      src="${article.image }"
       style="width:100%; height:70%; object-fit:cover; border-radius:20px;"
     >
     <h3 style="padding:10px;">${article.title}</h3>
   `;
    
    div.onclick = () => {
-    window.open(article[i].url,"_blank");
+    window.open(article.url,"_blank");
    };
 
    cardGrid3.appendChild(div);
@@ -76,3 +76,16 @@ async function getNews(category){
 }
 
 getNews()
+
+
+const searchInput = document.getElementById("search");
+
+searchInput.addEventListener("keypress", (e) => {
+  if (e.key === "Enter") {
+    const query = searchInput.value;
+
+    fetch(`https://gnews.io/api/v4/search?q=${query}&lang=en&apikey=${apiKey}`)
+      .then(res => res.json())
+      .then(data => showNews(data.articles));
+  }
+});
