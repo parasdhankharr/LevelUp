@@ -22,11 +22,13 @@ function showNews(articles) {
       <h3 style="padding:10px;">${article.title}</h3>
     `;
 
+    cardGrid2.appendChild(div);
+
     div.onclick = () => {
       window.open(article.url, "_blank");
     };
 
-    cardGrid2.appendChild(div);
+    
   }
 
 
@@ -78,14 +80,23 @@ async function getNews(category){
 getNews()
 
 
-const searchInput = document.getElementById("search");
+const GlobalbriefSearch = document.getElementById("search");
 
-searchInput.addEventListener("keypress", (e) => {
-  if (e.key === "Enter") {
-    const query = searchInput.value;
+GlobalbriefSearch.addEventListener("keypress", (e) => {
+  try {
+    if (e.key === "Enter") {
+    const input = GlobalbriefSearch.value;
 
-    fetch(`https://gnews.io/api/v4/search?q=${query}&lang=en&apikey=${apiKey}`)
-      .then(res => res.json())
-      .then(data => showNews(data.articles));
+    fetch(`https://gnews.io/api/v4/search?q=${input}&lang=en&apikey=${apiKey}`)
+      .then((res) => {return res.json()})
+      .then((data) => {return showNews(data.articles)});
+      
+      
   }
+  }
+  catch (err) {
+    console.log(err);
+    alert("something went wrong")
+  }
+  
 });
