@@ -58,7 +58,7 @@ function showNews(articles) {
 }
 
 
-const apiKey = "666d1e4a602432735e79bc852497583c"
+const apiKey = "4b274adf8393c4b4c4d2208843758760"
 async function getNews(category){
 
     let url = `https://gnews.io/api/v4/top-headlines?lang=en&max=10&apikey=${apiKey}`;
