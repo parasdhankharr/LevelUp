@@ -1,162 +1,118 @@
-
 let latest = [];
-
-
 
 // sorting work function done
 
 function showNews(articles) {
+  articles = articles.filter(
+    (article) => article.image && article.image.startsWith("http"),
+  );
 
-
-
-
-
-  
-
-  
-  articles = articles.filter(article => article.image && article.image.startsWith("http"));
-
-  
   let sortValue = document.getElementById("sort").value;
 
-  
-let displayArticles = [...articles]; // copy
+  let displayArticles = [...articles]; // copy
 
   if (sortValue === "publishedAt") {
-    displayArticles.sort((a, b) => new Date(b.publishedAt) - new Date(a.publishedAt));
+    displayArticles.sort(
+      (a, b) => new Date(b.publishedAt) - new Date(a.publishedAt),
+    );
   }
-  
 
- 
-    
-  
+  // grid 2 ka working system
 
+  let cardGrid2 = document.getElementById("card-grid-2");
 
+  cardGrid2.innerHTML = "";
 
-
-
-    // grid 2 ka working system
-
-    let cardGrid2 = document.getElementById("card-grid-2");
-
-    cardGrid2.innerHTML = "";
-
-    displayArticles.slice(0, 2).map(article => {
-      let div = document.createElement("div");
-      div.className = "card-2";
-      div.innerHTML = `
+  displayArticles.slice(0, 2).map((article) => {
+    let div = document.createElement("div");
+    div.className = "card-2";
+    div.innerHTML = `
       <img src="${article.image}" style="width:100%; height:80%; object-fit:cover; border-radius:25px;">
       <h3 style="padding:10px;">${article.title}</h3>
       `;
-      
-      cardGrid2.appendChild(div);
 
-      div.onclick = () => { 
-        window.open(article.url, "_blank"); 
-      };
-      });
+    cardGrid2.appendChild(div);
 
-    
-  
+    div.onclick = () => {
+      window.open(article.url, "_blank");
+    };
+  });
 
+  // grid 3 ka kaam
 
-    // grid 3 ka kaam 
-    let cardGrid3 = document.getElementById("card-grid-3");
+  let cardGrid3 = document.getElementById("card-grid-3");
 
-    cardGrid3.innerHTML = "";
+  cardGrid3.innerHTML = "";
 
-    for(let i =2; i < displayArticles.length ; i+=1){
-        let article = displayArticles[i]
-    
-    let div = document.createElement("div");    //.   crads bna rhe hai small ones sara data fetch krna ke liye
-    div.className = "card-3";                   //.   class given taki css add kr ske
-
-    div.innerHTML = `
-    <img 
-      src="${article.image }"
-      style="width:100%; height:70%; object-fit:cover; border-radius:20px;"
-    >
+displayArticles.slice(2).map(article => {
+  let div = document.createElement("div");
+  div.className = "card-3";
+  div.innerHTML = `
+    <img src="${article.image}" style="width:100%; height:70%; object-fit:cover; border-radius:20px;">
     <h3 style="padding:10px;">${article.title}</h3>
   `;
-   
-   div.onclick = () => {
-    window.open(article.url,"_blank");
-   };
+  div.onclick = () => { window.open(article.url, "_blank"); };
+  cardGrid3.appendChild(div);
+});
 
-   cardGrid3.appendChild(div);
-    }
 }
 
+const apiKey = "666d1e4a602432735e79bc852497583c";
+async function getNews(category) {
+  let url = `https://gnews.io/api/v4/top-headlines?lang=en&max=10&apikey=${apiKey}`;
 
-const apiKey = "666d1e4a602432735e79bc852497583c"
-async function getNews(category){
+  if (category) {
+    url += `&category=${category}`;
+  }
 
-    
+  const res = await fetch(url);
+  const news = await res.json();
 
-    let url = `https://gnews.io/api/v4/top-headlines?lang=en&max=10&apikey=${apiKey}`;
+  if (!news.articles) {
+    console.log("API working fail", news);
+    return;
+  }
 
-    if(category){
-        url += `&category=${category}`;
-    }
+  latest = [...news.articles];
 
-    const res = await fetch(url);
-    const news = await res.json();
-
-    
-
-    
-    if (!news.articles) {
-        console.log("API working fail", news);
-        return;
-    }
-
-    latest = [...news.articles];
-
-    showNews(news.articles);
+  showNews(news.articles);
 }
 
-getNews()
-
+getNews();
 
 const GlobalbriefSearch = document.getElementById("search");
 
 GlobalbriefSearch.addEventListener("keypress", (e) => {
   try {
     if (e.key === "Enter") {
-    const input = GlobalbriefSearch.value;
+      const input = GlobalbriefSearch.value;
 
-    fetch(`https://gnews.io/api/v4/search?q=${input}&lang=en&apikey=${apiKey}`)
-      .then((res) => {return res.json()})
-      .then((data) => {return showNews(data.articles)});
-      
-      
-  }
-  }
-  catch (err) {
+      fetch(
+        `https://gnews.io/api/v4/search?q=${input}&lang=en&apikey=${apiKey}`,
+      )
+        .then((res) => {
+          return res.json();
+        })
+        .then((data) => {
+          return showNews(data.articles);
+        });
+    }
+  } catch (err) {
     console.log("something went wrong");
-    
   }
-  
 });
 
+const catBtn = document.querySelectorAll(".catBtn");
 
-const catBtn = document.querySelectorAll(".catBtn")
-
-catBtn.forEach( i => {
-
-  i.addEventListener("click",()=>{
-    getNews(i.id)
-  })
-  
+catBtn.forEach((i) => {
+  i.addEventListener("click", () => {
+    getNews(i.id);
+  });
 });
 
 document.getElementById("sort").addEventListener("change", () => {
   let sortValue = document.getElementById("sort").value;
-  console.log("latest count:", latest.length)
+  console.log("latest count:", latest.length);
   showNews(latest);
-  console.log("sorting",sortValue)
+  console.log("sorting", sortValue);
 });
-
-
-
-
