@@ -1,4 +1,19 @@
+
+let latest = [];
+
+
+
+// sorting work function done
+
 function showNews(articles) {
+
+
+
+  articles = articles.filter(article => article.image && article.image.startsWith("http"));
+    
+  latest = articles;
+
+
 
 
 
@@ -8,7 +23,7 @@ function showNews(articles) {
 
     cardGrid2.innerHTML = ""; // clear old
 
-    for (let i = 0; i <= 1; i++) {
+    for (let i = 0; i < 2 && i < articles.length; i++) {
       let article = articles[i];
 
       let div = document.createElement("div");
@@ -34,6 +49,8 @@ function showNews(articles) {
 
     // grid 3 ka kaam 
     let cardGrid3 = document.getElementById("card-grid-3");
+
+    cardGrid3.innerHTML = "";
 
     for(let i =2; i <articles.length ; i+=1){
         let article = articles[i]
@@ -99,3 +116,32 @@ GlobalbriefSearch.addEventListener("keypress", (e) => {
   }
   
 });
+
+
+const catBtn = document.querySelectorAll(".catBtn")
+
+catBtn.forEach( i => {
+
+  i.addEventListener("click",()=>{
+    getNews(i.id)
+  })
+  
+});
+
+document.getElementById("sort").addEventListener("change", () => {
+
+  let sortValue = document.getElementById("sort").value;
+
+  if (sortValue === "publishedAt") {
+    let sorted = [...latest];
+
+    sorted.sort((a, b) => new Date(b.publishedAt) - new Date(a.publishedAt));
+
+    showNews(sorted);
+  } else {
+    showNews(latest);
+  }
+
+});
+
+

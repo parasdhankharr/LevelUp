@@ -41,7 +41,7 @@ body{
 
 }
 
-.cat-btn{
+.catBtn{
     background-color: #e5e7eb;
     height: 30px;
     width: 100px;
@@ -57,7 +57,7 @@ body{
 }
 
 
-.cat-btn:hover{
+.catBtn:hover{
     background-color: #111;
     color: white;
     cursor: pointer;
