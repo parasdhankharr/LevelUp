@@ -60,14 +60,13 @@ function showNews(articles) {
 
 const apiKey = "4b274adf8393c4b4c4d2208843758760"
 async function getNews(category){
-
     let url = `https://gnews.io/api/v4/top-headlines?lang=en&max=10&apikey=${apiKey}`;
 
     if(category){
         url += `&category=${category}`;
     }
 
-    const res =await fetch(url)
+    const res =await fetch(url);
 
     const news = await res.json()
 
@@ -95,8 +94,8 @@ GlobalbriefSearch.addEventListener("keypress", (e) => {
   }
   }
   catch (err) {
-    console.log(err);
-    alert("something went wrong")
+    console.log("something went wrong");
+    
   }
   
 });
