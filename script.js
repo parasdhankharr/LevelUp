@@ -9,9 +9,27 @@ function showNews(articles) {
 
 
 
+
+
+  
+
+  
   articles = articles.filter(article => article.image && article.image.startsWith("http"));
+
+  
+  let sortValue = document.getElementById("sort").value;
+
+  
+let displayArticles = [...articles]; // copy
+
+  if (sortValue === "publishedAt") {
+    displayArticles.sort((a, b) => new Date(b.publishedAt) - new Date(a.publishedAt));
+  }
+  
+
+ 
     
-  latest = articles;
+  
 
 
 
@@ -21,30 +39,25 @@ function showNews(articles) {
 
     let cardGrid2 = document.getElementById("card-grid-2");
 
-    cardGrid2.innerHTML = ""; // clear old
+    cardGrid2.innerHTML = "";
 
-    for (let i = 0; i < 2 && i < articles.length; i++) {
-      let article = articles[i];
-
+    displayArticles.slice(0, 2).map(article => {
       let div = document.createElement("div");
-      div.className = "card-2"; 
-
-    div.innerHTML = `
-      <img 
-        src="${article.image }"
-        style="width:100%; height:80%; object-fit:cover; border-radius:25px;"
-      >
+      div.className = "card-2";
+      div.innerHTML = `
+      <img src="${article.image}" style="width:100%; height:80%; object-fit:cover; border-radius:25px;">
       <h3 style="padding:10px;">${article.title}</h3>
-    `;
+      `;
+      
+      cardGrid2.appendChild(div);
 
-    cardGrid2.appendChild(div);
-
-    div.onclick = () => {
-      window.open(article.url, "_blank");
-    };
+      div.onclick = () => { 
+        window.open(article.url, "_blank"); 
+      };
+      });
 
     
-  }
+  
 
 
     // grid 3 ka kaam 
@@ -52,8 +65,8 @@ function showNews(articles) {
 
     cardGrid3.innerHTML = "";
 
-    for(let i =2; i <articles.length ; i+=1){
-        let article = articles[i]
+    for(let i =2; i < displayArticles.length ; i+=1){
+        let article = displayArticles[i]
     
     let div = document.createElement("div");    //.   crads bna rhe hai small ones sara data fetch krna ke liye
     div.className = "card-3";                   //.   class given taki css add kr ske
@@ -75,22 +88,31 @@ function showNews(articles) {
 }
 
 
-const apiKey = "4b274adf8393c4b4c4d2208843758760"
+const apiKey = "666d1e4a602432735e79bc852497583c"
 async function getNews(category){
+
+    
+
     let url = `https://gnews.io/api/v4/top-headlines?lang=en&max=10&apikey=${apiKey}`;
 
     if(category){
         url += `&category=${category}`;
     }
 
-    const res =await fetch(url);
+    const res = await fetch(url);
+    const news = await res.json();
 
-    const news = await res.json()
+    
 
-    showNews(news.articles)
+    
+    if (!news.articles) {
+        console.log("API working fail", news);
+        return;
+    }
 
-    console.log(news)
+    latest = [...news.articles];
 
+    showNews(news.articles);
 }
 
 getNews()
@@ -129,19 +151,12 @@ catBtn.forEach( i => {
 });
 
 document.getElementById("sort").addEventListener("change", () => {
-
   let sortValue = document.getElementById("sort").value;
-
-  if (sortValue === "publishedAt") {
-    let sorted = [...latest];
-
-    sorted.sort((a, b) => new Date(b.publishedAt) - new Date(a.publishedAt));
-
-    showNews(sorted);
-  } else {
-    showNews(latest);
-  }
-
+  console.log("latest count:", latest.length)
+  showNews(latest);
+  console.log("sorting",sortValue)
 });
+
+
 
 
